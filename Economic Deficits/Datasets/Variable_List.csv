@@ -1,0 +1,29 @@
+Unnamed: 0,Unnamed: 1,Unnamed: 2,Unnamed: 3,Unnamed: 4
+,,,,
+,Worksheet Order,Variable Name,Indicator Type,Series Name
+,1,ggdy,Government debt sustainability,"General government gross debt, % of GDP"
+,2,pby,Government debt sustainability,"Primary balance, % of GDP"
+,3,cby,Government debt sustainability,"Cyclically-adjusted balance, % of potential GDP"
+,4,fby,Government debt sustainability,"Fiscal balance, % of GDP"
+,5,dfggd,Government debt sustainability,"General government gross debt, % of average tax revenues"
+,6,dffb,Government debt sustainability,"Fiscal balance, % of average tax revenues"
+,7,ggdma,Government debt sustainability,"General government gross debt, % of 10-year moving average GDP"
+,8,fbma,Government debt sustainability,"Fiscal balance, % of 10-year moving average GDP"
+,,,,
+,9,fxsovsh,Balance sheet composition,"General government debt in foreign currency, % of total"
+,10,secnres,Balance sheet composition,"Debt securities held by nonresidents, % of total"
+,11,fordebtsh,Balance sheet composition,"General government debt held by nonresidents, % of total"
+,12,concggd,Balance sheet composition,"Concessional external debt stocks, % of external public debt"
+,13,avglife,Balance sheet composition,"Sovereign debt average maturity, years"
+,14,debtduey,Balance sheet composition,"Central government debt maturing in 12 months or less, % of GDP"
+,,,,
+,15,xtdebty,External and private sector debt,"Total external debt stocks, % of GDP"
+,16,fxdebtall,External and private sector debt,"External debt in foreign currency, % of total"
+,17,prdebty,External and private sector debt,"Private external debt stocks, % of GDP"
+,18,pscy,External and private sector debt,"Domestic credit to private sector, % of GDP"
+,19,stdebtall,External and private sector debt,"Short-term external debt stocks, % of total"
+,20,stdebtres,External and private sector debt,"Short-term external debt stocks, % of reserves"
+,21,xtdebtres,External and private sector debt,"Total external debt stocks, % of reserves"
+,22,xtdebtrxg,External and private sector debt,"Total external debt stocks, % of reserves excluding gold"
+,,,,
+,23,sovrate,Market perception,"Foreign currency long-term sovereign debt ratings, index from 1-21"
