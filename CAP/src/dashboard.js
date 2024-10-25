@@ -1,129 +1,140 @@
-import React from 'react'
-import { BarChart, Bar, LineChart, Line, PieChart, Pie, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts'
-import { Paper, Typography } from '@mui/material';
+import React, { useState, useRef, useEffect } from 'react';
+import { BarChart, Bar, LineChart, Line, PieChart, Pie, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
+import { AppBar, Toolbar, Typography, Button, Paper, Card, CardHeader, CardContent } from '@mui/material';
+import { Responsive, WidthProvider } from 'react-grid-layout';
+import 'react-grid-layout/css/styles.css';
+import 'react-resizable/css/styles.css';
 
-const CardHeader = ({ children }) => {
-  return (
-    <div style={{ padding: '16px', borderBottom: '1px solid #ccc' }}>
-      <Typography variant="h6">{children}</Typography>
-    </div>
-  );
-};
+const ResponsiveGridLayout = WidthProvider(Responsive);
 
-const CardContent = ({ children }) => {
-  return (
-    <div style={{ padding: '16px' }}>
-      {children}
-    </div>
-  );
-};
-
-const Card = ({ children, className }) => {
-  return (
-    <Paper elevation={0} className={className} style={{ borderRadius: '8px', overflow: 'hidden' }}>
-      {children}
-    </Paper>
-  );
-};
-
+// Add this near the top of your file, after the imports
 const sentimentData = [
   { name: 'Jan', positive: 4000, negative: 2400 },
   { name: 'Feb', positive: 3000, negative: 1398 },
   { name: 'Mar', positive: 2000, negative: 9800 },
   { name: 'Apr', positive: 2780, negative: 3908 },
   { name: 'May', positive: 1890, negative: 4800 },
-  { name: 'Jun', positive: 2390, negative: 3800 },
-]
+];
 
 const economicData = [
-  { name: 'Q1', deficit: 2400 },
-  { name: 'Q2', deficit: 1398 },
-  { name: 'Q3', deficit: 9800 },
-  { name: 'Q4', deficit: 3908 },
-]
+  { name: '2018', deficit: 3000 },
+  { name: '2019', deficit: 2000 },
+  { name: '2020', deficit: 2780 },
+  { name: '2021', deficit: 1890 },
+  { name: '2022', deficit: 2390 },
+];
 
 const disasterData = [
   { name: 'Floods', value: 400 },
   { name: 'Earthquakes', value: 300 },
   { name: 'Hurricanes', value: 300 },
   { name: 'Wildfires', value: 200 },
-]
-
+];
 export default function Dashboard() {
+  const [currentView, setCurrentView] = useState('all');
+
+  const layout = [
+    { i: 'sentiments', x: 0, y: 0, w: 1, h: 2 },
+    { i: 'economic', x: 1, y: 0, w: 1, h: 2 },
+    { i: 'disasters', x: 2, y: 0, w: 1, h: 2 },
+    { i: 'opinion', x: 0, y: 2, w: 1, h: 1 },
+    { i: 'legislative', x: 1, y: 2, w: 1, h: 1 },
+    { i: 'spending', x: 2, y: 2, w: 1, h: 1 },
+  ];
+
+  const renderCard = (cardId) => {
+    const cardRef = useRef(null);
+    const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+
+    useEffect(() => {
+      if (cardRef.current) {
+        const resizeObserver = new ResizeObserver(entries => {
+          for (let entry of entries) {
+            const { width, height } = entry.contentRect;
+            setDimensions({ width, height: height - 60 }); // Subtracting header height
+          }
+        });
+
+        resizeObserver.observe(cardRef.current);
+
+        return () => {
+          resizeObserver.disconnect();
+        };
+      }
+    }, []);
+
+    const renderChart = () => {
+      switch (cardId) {
+        case 'sentiments':
+          return (
+            <BarChart width={dimensions.width} height={dimensions.height} data={sentimentData}>
+              <XAxis dataKey="name" stroke="#fff" />
+              <YAxis stroke="#fff" />
+              <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none' }} />
+              <Bar dataKey="positive" fill="#8884d8" />
+              <Bar dataKey="negative" fill="#82ca9d" />
+            </BarChart>
+          );
+        case 'economic':
+          return (
+            <LineChart width={dimensions.width} height={dimensions.height} data={economicData}>
+              <XAxis dataKey="name" stroke="#fff" />
+              <YAxis stroke="#fff" />
+              <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none' }} />
+              <Line type="monotone" dataKey="deficit" stroke="#8884d8" />
+            </LineChart>
+          );
+        case 'disasters':
+          return (
+            <PieChart width={dimensions.width} height={dimensions.height}>
+              <Pie dataKey="value" data={disasterData} fill="#8884d8" label />
+              <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none' }} />
+            </PieChart>
+          );
+        // ... Add cases for 'opinion', 'legislative', and 'spending' ...
+        default:
+          return null;
+      }
+    };
+
+    return (
+      <Card className="bg-gray-800 border-gray-700" ref={cardRef}>
+        <CardHeader>{renderChart().props.children[0].props.children}</CardHeader>
+        <CardContent>
+          {renderChart()}
+        </CardContent>
+      </Card>
+    );
+  };
+
   return (
-    <div className="min-h-screen bg-gray-900 p-8 text-white">
-      <h1 className="text-4xl font-bold mb-8 text-center">Civics Analytics Platform</h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* National Sentiments */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>National Sentiments</CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={sentimentData}>
-                <XAxis dataKey="name" stroke="#fff" />
-                <YAxis stroke="#fff" />
-                <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none' }} />
-                <Bar dataKey="positive" fill="#8884d8" />
-                <Bar dataKey="negative" fill="#82ca9d" />
-              </BarChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Economic Fiscal Deficits */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>Economic Fiscal Deficits</CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={economicData}>
-                <XAxis dataKey="name" stroke="#fff" />
-                <YAxis stroke="#fff" />
-                <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none' }} />
-                <Line type="monotone" dataKey="deficit" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* National Disasters */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>National Disasters</CardHeader>
-          <CardContent>
-            <ResponsiveContainer width="100%" height={200}>
-              <PieChart>
-                <Pie dataKey="value" data={disasterData} fill="#8884d8" label />
-                <Tooltip contentStyle={{ backgroundColor: '#333', border: 'none' }} />
-              </PieChart>
-            </ResponsiveContainer>
-          </CardContent>
-        </Card>
-
-        {/* Additional cards for more metrics */}
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>Public Opinion</CardHeader>
-          <CardContent>
-            <div className="text-6xl font-bold text-center">67%</div>
-            <div className="text-center text-gray-400">Approval Rating</div>
-          </CardContent>
- </Card>
-
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>Legislative Productivity</CardHeader>
-          <CardContent>
-            <div className="text-6xl font-bold text-center">85</div>
-            <div className="text-center text-gray-400">Bills Passed</div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>Government Spending</CardHeader>
-          <CardContent>
-            <div className="text-6xl font-bold text-center">$1.2T</div>
-            <div className="text-center text-gray-400">Total Spending</div>
-          </CardContent>
-        </Card>
+    <div className="min-h-screen bg-gray-900 text-white">
+      <AppBar position="static">
+        <Toolbar>
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Civics Analytics Platform
+          </Typography>
+          <Button color="inherit" onClick={() => setCurrentView('all')}>All</Button>
+          <Button color="inherit" onClick={() => setCurrentView('sentiments')}>National Sentiments</Button>
+          <Button color="inherit" onClick={() => setCurrentView('economic')}>Economic Statistics</Button>
+          <Button color="inherit" onClick={() => setCurrentView('disasters')}>National Disasters</Button>
+        </Toolbar>
+      </AppBar>
+      <div className="p-8">
+        <ResponsiveGridLayout
+          className="layout"
+          layouts={{ lg: layout }}
+          breakpoints={{ lg: 1200, md: 996, sm: 768, xs: 480, xxs: 0 }}
+          cols={{ lg: 3, md: 2, sm: 1, xs: 1, xxs: 1 }}
+          rowHeight={300}
+        >
+          {layout.map((item) => (
+            <div key={item.i} style={{ display: currentView === 'all' || currentView === item.i ? 'block' : 'none' }}>
+              {renderCard(item.i)}
+            </div>
+          ))}
+        </ResponsiveGridLayout>
       </div>
     </div>
-  )
+  );
 }
