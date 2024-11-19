@@ -20,7 +20,6 @@ const economicData = [
   { name: '2019', deficit: 2000 },
   { name: '2020', deficit: 2780 },
   { name: '2021', deficit: 1890 },
-  { name: '2022', deficit: 2390 },
 ];
 
 const disasterData = [
