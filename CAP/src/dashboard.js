@@ -13,7 +13,6 @@ const sentimentData = [
   { name: 'Feb', positive: 3000, negative: 1398 },
   { name: 'Mar', positive: 2000, negative: 9800 },
   { name: 'Apr', positive: 2780, negative: 3908 },
-  { name: 'May', positive: 1890, negative: 4800 },
 ];
 
 const economicData = [
