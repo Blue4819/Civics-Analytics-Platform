@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
-disaster=pd.read_csv(r"C:\Users\Tanya\OneDrive\Desktop\Datasets\Natural_Disasters_in_India.csv")
+disaster=pd.read_csv(r"National Disasters\Natural_Disasters_in_India.csv")
 
 if 'Unnamed: 0' in disaster.columns:
     disaster.drop(columns=['Unnamed: 0'], inplace=True)
@@ -38,7 +38,7 @@ print(disaster.info())
 print(disaster.head())
 
 # Save the cleaned dataset if needed
-cleaned_file_path = r"C:\Users\Tanya\OneDrive\Desktop\Datasets\Cleaned_csv .csv"
+cleaned_file_path = r"National Disasters\Cleaned_csv.csv"
 disaster.to_csv(cleaned_file_path, index=False)
 
 # Step 1: Create a new column for decade ranges

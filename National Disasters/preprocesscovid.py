@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 # Load the dataset
-covid = pd.read_csv(r"C:\Users\Tanya\OneDrive\Desktop\Datasets\Covid_India.csv")
+covid = pd.read_csv("National Disasters\Covid_India.csv")
 
 if 'Unnamed: 0' in covid.columns:
     covid.drop(columns=['Unnamed: 0'], inplace=True)
@@ -26,7 +26,7 @@ print(covid.columns)
 print(covid.info())
 print(covid.head())
 
-cleaned_file_path = r"C:\Users\Tanya\OneDrive\Desktop\Datasets\Covid_cleaneddata .csv"
+cleaned_file_path = "National Disasters\Covid_cleaneddata .csv"
 covid.to_csv(cleaned_file_path, index=False)
 
 # Step 1: Group by 'Name of State / UT' and sum the total confirmed cases
