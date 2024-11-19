@@ -13,7 +13,6 @@ const sentimentData = [
   { name: 'Feb', positive: 3000, negative: 1398 },
   { name: 'Mar', positive: 2000, negative: 9800 },
   { name: 'Apr', positive: 2780, negative: 3908 },
-  { name: 'May', positive: 1890, negative: 4800 },
 ];
 
 const economicData = [
@@ -21,7 +20,6 @@ const economicData = [
   { name: '2019', deficit: 2000 },
   { name: '2020', deficit: 2780 },
   { name: '2021', deficit: 1890 },
-  { name: '2022', deficit: 2390 },
 ];
 
 const disasterData = [
