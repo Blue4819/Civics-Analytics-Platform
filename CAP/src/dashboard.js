@@ -18,8 +18,7 @@ const sentimentData = [
 const economicData = [
   { name: '2018', deficit: 3000 },
   { name: '2019', deficit: 2000 },
-  { name: '2020', deficit: 2780 },
-  { name: '2021', deficit: 1890 },
+  { name: '2020', deficit: 2780 }
 ];
 
 const disasterData = [
