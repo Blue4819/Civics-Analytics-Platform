@@ -13,6 +13,8 @@ RUN npm install --legacy-peer-deps
 
 # Copy the application code to the working directory
 COPY . .
+COPY ../National\ Disasters/ /app/data/nationa_disasters/
+COPY ../Economic\ Deficits/ /app/data/economic_deficits/
 
 # Expose the port that the application will run on
 EXPOSE 3000

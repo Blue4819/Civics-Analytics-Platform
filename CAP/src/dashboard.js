@@ -1,13 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { BarChart, Bar, LineChart, Line, PieChart, Pie, ResponsiveContainer, XAxis, YAxis, Tooltip, Legend } from 'recharts';
-import { AppBar, Toolbar, Typography, Button, Paper, Card, CardHeader, CardContent } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Card, CardHeader, CardContent } from '@mui/material';
 import { Responsive, WidthProvider } from 'react-grid-layout';
 import 'react-grid-layout/css/styles.css';
 import 'react-resizable/css/styles.css';
 
 const ResponsiveGridLayout = WidthProvider(Responsive);
 
-// Add this near the top of your file, after the imports
 const sentimentData = [
   { name: 'Jan', positive: 4000, negative: 2400 },
   { name: 'Feb', positive: 3000, negative: 1398 },
@@ -27,7 +26,8 @@ const disasterData = [
   { name: 'Hurricanes', value: 300 },
   { name: 'Wildfires', value: 200 },
 ];
-export default function Dashboard() {
+
+const Dashboard = () => {
   const [currentView, setCurrentView] = useState('all');
 
   const layout = [
@@ -46,7 +46,7 @@ export default function Dashboard() {
     useEffect(() => {
       if (cardRef.current) {
         const resizeObserver = new ResizeObserver(entries => {
-          for (let entry of entries) {
+          for (const entry of entries) {
             const { width, height } = entry.contentRect;
             setDimensions({ width, height: height - 60 }); // Subtracting header height
           }
@@ -125,7 +125,7 @@ export default function Dashboard() {
           cols={{ lg: 3, md: 2, sm: 1, xs: 1, xxs: 1 }}
           rowHeight={300}
         >
-          {layout.map((item) => (
+          {layout.map(item => (
             <div key={item.i} style={{ display: currentView === 'all' || currentView === item.i ? 'block' : 'none' }}>
               {renderCard(item.i)}
             </div>
@@ -134,4 +134,6 @@ export default function Dashboard() {
       </div>
     </div>
   );
-}
+};
+
+export default Dashboard;
