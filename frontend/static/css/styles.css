@@ -1,7 +1,7 @@
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Times New Roman', Times, serif;
     background-color: #f4f4f4;
-    color: #333;
+    color: #37183b;
     margin: 0;
     padding: 20px;
 }
@@ -17,7 +17,7 @@ body {
 
 button {
     padding: 10px 15px;
-    background-color: #007bff;
+    background-color: #370a41;
     color: white;
     border: none;
     border-radius: 5px;
@@ -25,5 +25,5 @@ button {
 }
 
 button:hover {
-    background-color: #0056b3;
+    background-color: #a730b1;
 }

@@ -1,0 +1,67 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    height: 100%; /* Full height of the viewport */
+}
+
+.container {
+    display: flex;
+    width: 100%;
+}
+
+.sidebar {
+    width: 250px; /* Width of the sidebar */
+    background-color: #390f41; /* Background color of the sidebar */
+    color: white; /* Text color */
+    padding: 20px;
+    box-shadow: 2px 0 5px rgba(43, 3, 46, 0.5);
+    height: 100vh; /* Full height of the viewport */
+    border-top-right-radius: 30px; /* Curve the top right corner */
+    border-bottom-right-radius: 30px; /* Curve the bottom right corner */
+}
+
+.sidebar h2 {
+    margin: 0;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin: 15px 0;
+}
+
+.sidebar ul li a {
+    color: white; /* Default link color */
+    text-decoration: none;
+    display: block; /* Make the link fill the entire list item */
+    padding: 20px;
+    font-size: 18 px;
+    transition: background-color 0.7s, color 0.5s; /* Smooth transition for hover effect */
+    border-radius: 15px;
+}
+
+.sidebar ul li a:hover {
+    background-color: #781a70; /* Change background on hover */
+    color: white;
+    transition: background-color 0.7s;
+}
+
+.content {
+    padding: 20px;
+    flex-grow: 1; /* Allow content to take up remaining space */
+    height: 100vh; /* Full height of the viewport */
+    overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+/* Active link styles */
+.active {
+    background-color: white; /* Background color for active link */
+}
+
+.sidebar ul li a.active {
+    color: #390f41; /* Change text color for active link */
+}
