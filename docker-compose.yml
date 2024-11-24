@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    volumes:
+      - ./backend:/app  # Mount the backend directory
+    command:   # Replace with your main script
+    # If you need to expose a port for the backend, uncomment the line below
+    # ports:
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"  # Assuming your frontend runs on port 5000
+    depends_on:
+      - backend

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <title>Civics Analytics Platform</title>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Civics Analytics Platform</h2>
+            <ul>
+                <li><a href="{{ url_for('dashboard') }}">Dashboard</a></li>
+                <li><a href="{{ url_for('nationalsentiments') }}">National Sentiments</a></li>
+                <li><a href="{{ url_for('nationaldisasters') }}">National Disasters</a></li>
+                <li><a href="{{ url_for('economicdeficits') }}">Economic Deficits</a></li>
+            </ul>
+        </div>
+        <div class="content">
+            {% block content %}{% endblock %}
+        </div>
+    </div>
+</body>
+</html>
