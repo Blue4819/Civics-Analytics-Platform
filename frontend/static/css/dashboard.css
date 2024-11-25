@@ -1,0 +1,21 @@
+.card-container {
+    display: flex;
+    flex-wrap: wrap; /* Allow cards to wrap to the next line */
+    justify-content: flex-start; /* Align cards to the start */
+    padding: 20px; /* Padding around the container */
+}
+
+.card, .available-card {
+    background-color: #f8f9fa; /* Light background color for the card */
+    border: 1px solid #ddd; /* Border for the card */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    width: 200px; /* Fixed width for equal size */
+    margin: 10px; /* Margin around each card */
+    padding: 15px; /* Padding inside the card */
+    text-align: center; /* Center text inside the card */
+}
+
+button {
+    margin-top: 10px; /* Space above buttons */
+}

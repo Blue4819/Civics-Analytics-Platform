@@ -14,5 +14,7 @@
    # Copy the rest of the application code into the container
    COPY . .
 
+   EXPOSE 8000
+
    # Command to run your Python script (replace 'your_script.py' with your main script)
-   CMD ["python", "your_script.py"]
+   CMD ["python", "backend.py"]

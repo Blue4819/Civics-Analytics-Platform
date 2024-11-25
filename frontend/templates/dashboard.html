@@ -2,4 +2,15 @@
 
 {% block content %}
 <h1>Dashboard</h1>
+<div class="card-container">
+    {% for disaster in disaster_data %}
+    <div class="card">
+        <h3>{{ disaster.Title }}</h3>
+        <p>Date: {{ disaster.Date }}</p>
+        <p>Type: {{ disaster.Disaster_Type }}</p>
+        <p>Location: {{ disaster.Location }}</p>
+        <p>Details: {{ disaster.Disaster_Info }}</p>
+    </div>
+    {% endfor %}
+</div>
 {% endblock %}

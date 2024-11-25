@@ -9,7 +9,8 @@ services:
       - ./backend:/app  # Mount the backend directory
     command:   # Replace with your main script
     # If you need to expose a port for the backend, uncomment the line below
-    # ports:
+    ports:
+      - "8000:8000"
 
   frontend:
     build:
