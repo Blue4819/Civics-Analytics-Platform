@@ -41,7 +41,7 @@ def create_reddit_object(json_file="C:\\Users\\Purva\\Desktop\\WORK\\Sem-7\\Caps
 
 
 
-subred = reddit.subreddit("learnprogramming")
+subred = reddit.subreddit("India's News")
 hot = subred.hot(limit = 11)
 new = subred.new(limit = 10)
 controv = subred.controversial(limit=10)
