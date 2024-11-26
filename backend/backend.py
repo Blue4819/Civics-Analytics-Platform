@@ -12,7 +12,8 @@ def refresh_data(card_id):
         csv_file_path = os.path.join('./National Disasters', 'Cleaned_csv.csv')
         disaster_data = pd.read_csv(csv_file_path)
         # Convert the DataFrame to a dictionary
-        return jsonify(disaster_data.to_dict(orient='records'))
+        disaster_data_counts = disaster_data['Year'].value_counts().sort_index()
+        return jsonify(disaster_data_counts.to_dict())
     return jsonify({"error": "Invalid card_id"}), 400
 
 if __name__ == '__main__':
