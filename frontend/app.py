@@ -16,7 +16,7 @@ def nationaldisasters():
     # Fetch data from the backend
     response = requests.post('http://backend:8000/get-data/national_disasters')
     if response.status_code == 200:
-        disaster_data = response
+        disaster_data = response.json()
     else:
         disaster_data = []
     return render_template('nationaldisasters.html', disaster_data=disaster_data)
