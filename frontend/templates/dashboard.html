@@ -1,55 +1,5 @@
 {% extends 'base.html' %}
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx = document.getElementById('disasterChart').getContext('2d');
-
-    // Prepare the data
-    const disasterStats = JSON.parse('{{ disaster_data | tojson | safe }}'); // Pass the data from Flask to JavaScript
-    const labels = Object.keys(disasterStats); // Years
-    const data = Object.values(disasterStats); // Counts of disasters
-    console.log(labels,data)
-
-    // Create the chart
-    const myChart = new Chart(ctx, {
-        type: 'bar', 
-        data: {
-            labels: labels,
-            datasets: [{
-                label: 'Number of Disasters',
-                data: data,
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                borderColor: 'rgba(75, 192, 192, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Number of Disasters' // Add a title to the y-axis
-                    }
-                },
-                x: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Years'
-                    }
-                }
-            }
-        }
-    });
-</script>
-
 {% block content %}
 <h1>Dashboard</h1>
-<div class="card-container">
-    <div class="card">
-        <h3>Disaster Statistics</h3>
-        <canvas id="disasterChart" width="400" height="200"></canvas>
-    </div>
-</div>
+
 {% endblock %}
