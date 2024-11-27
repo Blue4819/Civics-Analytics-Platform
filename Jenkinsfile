@@ -7,6 +7,7 @@ pipeline {
         WIN_HOST = 'host.docker.internal'
         WIN_PORT = '22'
         WIN_USER = 'user'  // The user you're logging into the Windows machine with
+        SSH_PASSWORD = 'password'
     }
 
     stages {
@@ -23,7 +24,7 @@ pipeline {
                 script {
                     try {
                         // SSH into Windows machine to run remote commands
-                        sh '''
+                        sh '''sshpass -p $SSH_PASSWORD
                             ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_PATH} ${WIN_USER}@${WIN_HOST} -p ${WIN_PORT} 'echo "Connected to Windows from Docker"'
                             echo 'Running build on Windows from Docker'
                         '''
