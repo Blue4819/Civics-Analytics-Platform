@@ -20,12 +20,17 @@
         <canvas id="miniNationalSentimentsChart"></canvas>
     </div>
     <div id="card2">
-        <h3>  Top 5 News</h3>
-        <ul id="newsList"></ul>
-        <button id="refreshNewsButton">Refresh News</button>
+        <h3>Top 5 News</h3>
+        <div class="news-container">
+            <ul id="newsList" class="news-list"></ul>
+        </div>
+        <button id="refreshNewsButton" class="refresh-button">
+            <i class="fas fa-sync-alt"></i> Refresh News
+        </button>
     </div>
 </div>
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
@@ -136,19 +141,13 @@
         };
 
         const fetchAndDisplayNews = async () => {
-            const response = await fetch('/fetch-news'); // Fetch news from the backend
-            if (response.ok) {
-                const newsData = await response.json();
-                const newsList = document.getElementById('newsList');
-                newsList.innerHTML = ''; // Clear existing news
+            const newsList = document.getElementById('newsList');
+            newsList.innerHTML = ''; // Clear existing news
                 newsData.forEach(newsItem => {
                     const listItem = document.createElement('li');
                     listItem.textContent = newsItem.title; // Assuming newsItem has a 'title' property
                     newsList.appendChild(listItem);
                 });
-            } else {
-                console.error('Failed to fetch news');
-            }
         };
 
         document.getElementById('refreshNewsButton').addEventListener('click', fetchAndDisplayNews);
@@ -177,11 +176,52 @@
     #card2 {
         background-color: #f8f9fa;
         border: 1px solid #c0bebe;
+        border-radius: 10px;
         height: 300px;
-        width: 200px;
+        width: 250px;
         position: fixed;
         top: 20px;
-        right:20px;
+        right: 20px;
+        padding: 15px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    .news-container {
+        height: 200px;
+        overflow-y: auto;
+        margin: 10px 0;
+    }
+
+    .news-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .news-list li {
+        padding: 10px;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+        transition: background-color 0.3s;
+    }
+
+    .news-list li:hover {
+        background-color: #e9ecef;
+    }
+
+    .refresh-button {
+        width: 100%;
+        padding: 8px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .refresh-button:hover {
+        background-color: #0056b3;
     }
 </style>
 {% endblock %}
