@@ -25,8 +25,7 @@ pipeline {
                     try {
                         // SSH into Windows machine to run remote commands
                         sh '''sshpass -p "$SSH_PASSWORD"
-                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_PATH} ${WIN_USER}@${WIN_HOST} -p ${WIN_PORT} 'echo "Connected to Windows from Docker"'
-                            echo 'Running build on Windows from Docker'
+                        ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_PATH} ${WIN_USER}@${WIN_HOST} -p ${WIN_PORT} 'echo "Connected to Windows from Docker"' && docker-compose up --build
                         '''
                     } catch (Exception e) {
                         // Mark build as failed and re-throw the exception
