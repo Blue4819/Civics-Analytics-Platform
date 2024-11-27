@@ -35,7 +35,7 @@ pipeline {
                     }
                 }
         }
-        }
+        
         stage('Test') {
             steps {
                 echo 'Testing.'
@@ -46,8 +46,7 @@ pipeline {
                 echo 'Eg: Deploying the project.'
             }
         }
-    }
-
+}
     post {
         success {
             echo 'Build and deployment successful!'
