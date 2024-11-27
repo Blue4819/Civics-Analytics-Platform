@@ -26,12 +26,12 @@ pipeline {
         }
         stage('Test') {
             steps {
-                echo 'Running tests.'
+                echo 'Testing.'
             }
         }
         stage('Deploy') {
             steps {
-                echo 'Deploying the project.'
+                echo 'Eg: Deploying the project.'
             }
         }
     }
