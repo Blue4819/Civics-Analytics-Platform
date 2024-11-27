@@ -1,14 +1,77 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1> sentiment analysis</h1>
+<h1>Sentiment Analysis</h1>
+
+<!-- Include Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Canvas for the chart -->
+<canvas id="sentimentChart" width="400" height="200"></canvas>
 
 <script>
-    // Log the data in the browser console
-    const redditData = {{ reddit_data | tojson}};
+    // Data from your backend (converted to JSON)
+    const redditData = {{ reddit_data | tojson }};
     console.log(redditData);
+
+    // Extract data for the chart
+    const labels = redditData.map((_, index) => `Row ${index}`);
+    const compoundData = redditData.map(data => data.Compound);
+    const negativeData = redditData.map(data => data.Negative);
+    const neutralData = redditData.map(data => data.Neutral);
+    const positiveData = redditData.map(data => data.Positive);
+
+    // Create the bar chart using Chart.js
+    const ctx = document.getElementById('sentimentChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels, // Row labels
+            datasets: [
+                {
+                    label: 'Compound',
+                    data: compoundData,
+                    backgroundColor: 'blue',
+                },
+                {
+                    label: 'Negative',
+                    data: negativeData,
+                    backgroundColor: 'red',
+                },
+                {
+                    label: 'Neutral',
+                    data: neutralData,
+                    backgroundColor: 'green',
+                },
+                {
+                    label: 'Positive',
+                    data: positiveData,
+                    backgroundColor: 'orange',
+                },
+            ],
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                title: {
+                    display: true,
+                    text: 'Sentiment Analysis Scores',
+                },
+            },
+            scales: {
+                x: {
+                    stacked: true,
+                },
+                y: {
+                    stacked: false,
+                },
+            },
+        },
+    });
 </script>
 
-<p>Check the console for the data.</p>
+<p>Check the chart above for the sentiment analysis scores.</p>
 {% endblock %}
-
