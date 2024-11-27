@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>National Sentiments</h1>
-<p>This page will display national sentiments data.</p>
+<h1> sentiment analysis</h1>
+
+<script>
+    // Log the data in the browser console
+    const redditData = {{ reddit_data | tojson}};
+    console.log(redditData);
+</script>
+
+<p>Check the console for the data.</p>
 {% endblock %}
+
