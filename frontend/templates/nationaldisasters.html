@@ -2,17 +2,25 @@
 
 {% block content %}
 <h1>National Disasters</h1>
-<div class="card-container">
-    <div class="card">
-        <h3>Disaster Statistics</h3>
+<div class="graph-container">
+    <div class="graph">
+        <h3>National Disasters</h3>
         <canvas id="disasterChart" width="400" height="200"></canvas>
+    </div>
+    <div class="graph" id="'piechart">
+        <h3>COVID-19 Cases by State</h3>
+        <input type="date" id="startDate" />
+        <input type="date" id="endDate" />
+        <button id="filterButton">Filter</button>
+        <canvas id="covidPieChart" width="400" height="200"></canvas>
     </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const ctx = document.getElementById('disasterChart').getContext('2d');
+        const ctxDisaster = document.getElementById('disasterChart').getContext('2d');
+        const ctxCovid = document.getElementById('covidPieChart').getContext('2d');
 
         // Use the disaster_data passed from Flask
         const disasterData = {{ disaster_data | tojson }};  // Convert the Python dictionary to JSON
@@ -20,8 +28,8 @@
         const labels = Object.keys(disasterData); // Years
         const counts = Object.values(disasterData); // Counts of disasters
 
-        // Create the chart
-        const myChart = new Chart(ctx, {
+        // Create the disaster chart
+        new Chart(ctxDisaster, {
             type: 'bar',
             data: {
                 labels: labels,
@@ -52,6 +60,130 @@
                 }
             }
         });
+
+        // Use the covid_data passed from Flask
+        const covidData = {{ covid_data | tojson }};  // Convert the Python list to JSON
+
+        // Set the min and max date for the input fields
+        const minDate = "{{ min_date }}";
+        const maxDate = "{{ max_date }}";
+        document.getElementById('startDate').setAttribute('min', minDate);
+        document.getElementById('startDate').setAttribute('max', maxDate);
+        document.getElementById('endDate').setAttribute('min', minDate);
+        document.getElementById('endDate').setAttribute('max', maxDate);
+
+        // Populate the date inputs with unique dates
+        const uniqueDates = new Set(covidData.map(entry => entry['Date'])); // Assuming 'Date' is the key for dates
+        const sortedUniqueDates = Array.from(uniqueDates).sort(); // Convert Set to Array and sort
+        const startDateInput = document.getElementById('startDate');
+        const endDateInput = document.getElementById('endDate');
+        startDateInput.innerHTML = '';
+        endDateInput.innerHTML = '';
+
+        sortedUniqueDates.forEach(date => {
+            const option = new Option(date, date);
+            startDateInput.appendChild(option);
+            endDateInput.appendChild(option.cloneNode(true)); // Clone the option for the end date
+        });
+
+        // Set the min and max date for the input fields
+        if (sortedUniqueDates.length > 0) {
+            const minDate = sortedUniqueDates[0];
+            const maxDate = sortedUniqueDates[sortedUniqueDates.length - 1];
+            startDateInput.setAttribute('min', minDate);
+            startDateInput.setAttribute('max', maxDate);
+            endDateInput.setAttribute('min', minDate);
+            endDateInput.setAttribute('max', maxDate);
+        }
+
+        // Create the pie chart
+        const createPieChart = (data) => {
+            const stateCases = data.reduce((acc, curr) => {
+                const state = curr['Name of State / UT'];
+                const cases = curr['Total Confirmed cases'] || 0;
+                acc[state] = (acc[state] || 0) + cases;
+                return acc;
+            }, {});
+
+            const labels = Object.keys(stateCases);
+            const counts = Object.values(stateCases);
+
+            // Determine color based on case size
+            const maxCases = Math.max(...counts);
+            const colors = counts.map(count => {
+                const ratio = count / maxCases; // Get a ratio between 0 and 1
+                const red = Math.floor(255 * ratio); // Red increases from 0 to 255
+                const green = Math.floor(255 * (1 - ratio)); // Green decreases from 255 to 0
+                return `rgba(${red}, ${green}, 0, 0.6)`; // Create the color in rgba format
+            });
+
+            new Chart(ctxCovid, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'COVID-19 Cases by State',
+                        data: counts,
+                        backgroundColor: colors, // Use the generated colors
+                        borderColor: 'rgba(255, 255, 255, 1)', // White border for better visibility
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            display: false,
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(tooltipItem) {
+                                    const percentage = ((tooltipItem.raw / counts.reduce((a, b) => a + b, 0)) * 100).toFixed(1);
+                                    return `${tooltipItem.label}: ${percentage}%`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Create the pie chart with the fetched COVID data
+        createPieChart(covidData);
+
+        document.getElementById('filterButton').addEventListener('click', () => {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            // Implement date filtering logic here
+        });
     });
 </script>
+
+<style>
+    .graph-container {
+        display: flexbox;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin: 20px;
+    }
+    .graph {
+        flex: 1; /* Allow each graph to take equal space */
+        margin: 0 10px; /* Add some space between the graphs */
+        padding: 20px; /* Add padding around the graph */
+        width: 80%; /* Set a maximum width to keep it reasonable */
+        background-color: #f9f9f9; /* Optional: Add a light background color for better visibility */
+        border-radius: 8px; /* Optional: Add rounded corners */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Add a subtle shadow */
+    }
+
+    #pie-chart{
+        width:200px;
+    }
+
+    canvas {
+        max-width: 100%; /* Ensure the canvas fits within the graph div */
+        height: auto; /* Maintain aspect ratio */
+    }
+</style>
 {% endblock %}
