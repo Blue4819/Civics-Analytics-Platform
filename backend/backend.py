@@ -9,12 +9,28 @@ CORS(app)
 
 @app.route('/get-data/<card_id>', methods=['POST'])
 def refresh_data(card_id):
-    if card_id == 'national_disasters':
+    if card_id == 'national_disasters_count':
         disaster_data = pd.read_csv('./National Disasters/Cleaned_csv.csv')
-        print(disaster_data)
         # Convert the DataFrame to a dictionary
         disaster_data_counts = disaster_data['Year'].value_counts().sort_index()
         return jsonify(disaster_data_counts.to_dict())
+    
+    if card_id == 'covid_data':
+        covid_data = pd.read_csv('./National Disasters/Covid_cleaneddata .csv')
+        return jsonify(covid_data.to_dict(orient='records'))
+
+    return jsonify({"error": "Invalid card_id"}), 400
+
+@app.route('/get-economicdata/<card_id>', methods=['POST'])
+def refresh_economicdata(card_id):
+    if card_id == 'economic_deficit':
+        economic_deficit = pd.read_csv('./Economic Deficit/gross-fiscal-deficit.csv')
+        return jsonify()
+    
+    if card_id == 'covid_data':
+        covid_data = pd.read_csv('./National Disasters/Covid_cleaneddata .csv')
+        return jsonify(covid_data.to_dict(orient='records'))
+
     return jsonify({"error": "Invalid card_id"}), 400
 
 
