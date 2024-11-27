@@ -1,13 +1,135 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Economic Deficits Over the Years</h1>
+<h1>Fiscal Deficits by State</h1>
+<div>
+    <label for="stateDropdown">Select State:</label>
+    <select id="stateDropdown"></select>
+</div>
+<canvas id="fiscalDeficitChart" width="800" height="400"></canvas>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Log the data in the browser console
-    const economicData = {{ eco_data | tojson}};
-    console.log(economicData);
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('fiscalDeficitChart').getContext('2d');
+        const stateDropdown = document.getElementById('stateDropdown');
+
+        // Fetch the fiscal deficit data from the backend
+        const fiscalData = {{ fiscal_data | tojson }};  // Convert the Python dictionary to JSON
+
+        // Debugging: Log the fiscal data to the consople
+        console.log('Fiscal Data:', fiscalData);
+
+        // Populate the dropdown with state names
+        const states = Object.keys(fiscalData);
+        states.forEach(state => {
+            const option = new Option(state, state);
+            stateDropdown.appendChild(option);
+        });
+
+        // Check if states are populated
+        console.log('States in Dropdown:', states);
+
+        // Function to plot the fiscal deficit for the selected state
+        const plotFiscalDeficit = (state) => {
+            const stateData = fiscalData.find(item => item.State === state);
+            const years = Object.keys(stateData).filter(key => key !== 'State'); // Exclude 'State' key
+            const values = years.map(year => stateData[year]);
+
+            // Clear the previous chart
+            ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+
+            // Create the line chart
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: years,
+                    datasets: [{
+                        label: `Fiscal Deficit for ${state}`,
+                        data: values,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderWidth: 2,
+                        fill: true,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            title: {
+                                display: true,
+                                text: 'Fiscal Deficit (in Rs. Billion)'
+                            }
+                        },
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Year'
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Initial plot for all states
+        const allStatesData = fiscalData.map(item => {
+            return {
+                label: item.State,
+                data: Object.keys(item).filter(key => key !== 'State').map(year => item[year]),
+            };
+        });
+
+        // Create a dataset for all states
+        const allStatesDataset = allStatesData.map(stateData => ({
+            label: stateData.label,
+            data: stateData.data,
+            borderColor: 'rgba(75, 192, 192, 0.5)',
+            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+            fill: true,
+        }));
+
+        // Create the line chart for all states
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: Object.keys(fiscalData[0]).filter(key => key !== 'State'), // Get years from the first state
+                datasets: allStatesDataset,
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: false,
+                        title: {
+                            display: true,
+                            text: 'Fiscal Deficit (in Rs. Billion)'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Year'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Event listener for dropdown change
+        stateDropdown.addEventListener('change', (event) => {
+            const selectedState = event.target.value;
+            plotFiscalDeficit(selectedState);
+        });
+    });
 </script>
 
-<p>Check the console for the data.</p>
+<style>
+    #fiscalDeficitChart {
+        max-width: 800px;
+        margin: 20px auto;
+    }
+</style>
 {% endblock %}
