@@ -51,16 +51,5 @@ pipeline {
                  subject: "Build Failed: ${currentBuild.fullDisplayName}",
                  body: "Something is wrong with ${env.BUILD_URL}. Please check the console output."
         }
-        unstable {
-            echo 'Build is unstable!'
-            // Optionally, you can handle unstable builds here
-            mail to: 'prachi.bharti21@st.niituniversity.in, purva.21@st.niituniversity.in, tanya.singh21@st.niituniversity.in, mehak.kapoor21@st.niituniversity.in',
-                 subject: "Build Unstable: ${currentBuild.fullDisplayName}",
-                 body: "The build is unstable: ${env.BUILD_URL}. Please check the console output."
-        }
-        always {
-            // This block will run regardless of the build status
-            echo 'Cleaning up...'
-        }
     }
 }
