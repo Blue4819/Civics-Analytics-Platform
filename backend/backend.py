@@ -59,14 +59,13 @@ def fetch_news():
     
 def extract_top_five_news():
     # Example logic to fetch news
-    # This should be replaced with your actual news extraction logic
-    news = [
-        {"title": "News Article 1"},
-        {"title": "News Article 2"},
-        {"title": "News Article 3"},
-        {"title": "News Article 4"},
-        {"title": "News Article 5"},
-    ]
+    news = {
+        "title": "News Article 1",
+        "title": "News Article 2",
+        "title": "News Article 3",
+        "title": "News Article 4",
+        "title": "News Article 5"
+        }
     return news
 
 if __name__ == '__main__':

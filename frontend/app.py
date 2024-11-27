@@ -5,8 +5,12 @@ app = Flask(__name__)
 
 @app.route('/')
 def dashboard():
-    return render_template('dashboard.html')
-
+    response = requests.get('http://backend:8000/fetch-news')
+    if response.status_code == 200:
+        news = response.json()
+    else:
+        news = []
+    return render_template('dashboard.html', news = news)
 
 @app.route('/nationaldisasters')
 def nationaldisasters():

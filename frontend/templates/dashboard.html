@@ -38,6 +38,11 @@
             dragClass: 'sortable-drag' // Class name for the dragging item
         });
 
+        const newsData = {{ news | tojson }};
+        const headlines = Object.keys(newsData);
+        const news = Object.values(newsData);
+        console.log(newsData)
+
         const fetchDataAndRenderCharts = async () => {
             // Fetch disaster data
             const disasterResponse = await fetch('/nationaldisasters'); // Fetch the page to get the data
