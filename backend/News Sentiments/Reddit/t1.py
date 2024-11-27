@@ -55,7 +55,8 @@ for post in hot_posts:
 df = pd.DataFrame(post_sentiments)
 
 # Save the DataFrame to a CSV file
-csv_file_path = "reddit_sentiment_analysis.csv"
+csv_file_path = r"C:\Users\Purva\Desktop\WORK\Sem-7\Capstone\Civics-Analytics-Platform\backend\News Sentiments\Reddit\reddit_sentiment_analysis.csv"
+
 df.to_csv(csv_file_path, index=False)
 
 print(f"Sentiment analysis completed and results saved to {csv_file_path}")
