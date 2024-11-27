@@ -6,7 +6,7 @@ pipeline {
         stage('Checkout') {
             steps {
                 // Clone the repository
-                git branch: 'main', url: 'https://github.com/Blue4819/Civics-Analytics-Platform.git'
+                git branch: 'main', url: 'https://github.com/Blue4819/Civics-Analytics-Platform'
             }
         }
         
