@@ -1,8 +1,13 @@
 pipeline {
     agent any
 
-    environment{
-        DOCKER_HOST = 'tcp://192.168.56.1:2375'
+    environment {
+        // Define the SSH private key path in Jenkins, and the host to connect to
+        SSH_KEY_PATH = '/var/jenkins_home/.ssh/id_rsa'
+        WIN_HOST = 'host.docker.internal'
+        WIN_PORT = '22'
+        WIN_USER = 'user'  // The user you're logging into the Windows machine with
+        SSH_PASSWORD = 'password'
     }
 
     stages {
@@ -18,17 +23,20 @@ pipeline {
             steps {
                 script {
                     try {
-                        // Build and run the application using Docker Compose
-                        //sh 'docker-compose up --build -d' 
-                        echo 'Building app'
+                        // SSH into Windows machine to run remote commands
+                        sh '''sshpass -p "$SSH_PASSWORD"
+                            ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_PATH} ${WIN_USER}@${WIN_HOST} -p ${WIN_PORT} 'echo "Connected to Windows from Docker"'
+                            echo 'Running build on Windows from Docker'
+                        '''
                     } catch (Exception e) {
                         // Mark build as failed and re-throw the exception
                         currentBuild.result = 'FAILURE'
                         throw e
                     }
+                    }
                 }
         }
-        }
+        
         stage('Test') {
             steps {
                 echo 'Testing.'
@@ -39,8 +47,7 @@ pipeline {
                 echo 'Eg: Deploying the project.'
             }
         }
-    }
-
+}
     post {
         success {
             echo 'Build and deployment successful!'

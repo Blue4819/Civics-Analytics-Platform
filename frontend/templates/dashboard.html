@@ -5,21 +5,30 @@
 <div id="dashboard" class="dashboard-container">
     <div class="card">
         <h3>National Disasters</h3>
-        <canvas id="miniDisasterChart" width="400" height="200"></canvas>
+        <canvas id="miniDisasterChart"></canvas>
     </div>
     <div class="card">
         <h3>COVID-19 Cases by State</h3>
-        <canvas id="miniCovidChart" width="400" height="200"></canvas>
+        <canvas id="miniCovidChart"></canvas>
     </div>
     <div class="card">
         <h3>Fiscal Deficits by State</h3>
-        <canvas id="miniFiscalDeficitChart" width="400" height="200"></canvas>
+        <canvas id="miniFiscalDeficitChart"></canvas>
     </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const dashboard = document.getElementById('dashboard');
+        Sortable.create(dashboard, {
+            animation: 150, // Animation speed in milliseconds
+            ghostClass: 'sortable-ghost', // Class name for the ghost element
+            chosenClass: 'sortable-chosen', // Class name for the chosen item
+            dragClass: 'sortable-drag' // Class name for the dragging item
+        });
+
         const fetchDataAndRenderCharts = async () => {
             // Fetch disaster data
             const disasterResponse = await fetch('/nationaldisasters'); // Fetch the page to get the data
@@ -76,7 +85,7 @@
         const renderMiniChart = (canvasId, labels, data) => {
             const ctx = document.getElementById(canvasId).getContext('2d');
             new Chart(ctx, {
-                type: 'bar', // or 'line', 'pie', etc.
+                type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
