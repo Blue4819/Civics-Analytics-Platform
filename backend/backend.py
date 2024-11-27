@@ -21,18 +21,6 @@ def refresh_data(card_id):
 
     return jsonify({"error": "Invalid card_id"}), 400
 
-@app.route('/get-economicdata/<card_id>', methods=['POST'])
-def refresh_economicdata(card_id):
-    if card_id == 'economic_deficit':
-        economic_deficit = pd.read_csv('./Economic Deficit/gross-fiscal-deficit.csv')
-        return jsonify()
-    
-    if card_id == 'covid_data':
-        covid_data = pd.read_csv('./National Disasters/Covid_cleaneddata .csv')
-        return jsonify(covid_data.to_dict(orient='records'))
-
-    return jsonify({"error": "Invalid card_id"}), 400
-
 
 @app.route('/eco-data/<card_id>', methods=['POST'])
 def economics_data(card_id):
