@@ -19,7 +19,7 @@ pipeline {
                 script {
                     try {
                         // Build and run the application using Docker Compose
-                        sh '''ssh -o StrictHostKeyChecking=no user@<laptop_ip> -p 2222 'echo "Hello from Jenkins"
+                        sh '''ssh -o StrictHostKeyChecking=no user@172.24.108.116 -p 2222 'echo "Hello from Jenkins"
                         '''
                         echo 'Building app'
                     } catch (Exception e) {
