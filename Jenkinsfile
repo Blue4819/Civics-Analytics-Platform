@@ -2,10 +2,27 @@ pipeline {
     agent any
 
     stages {
+
+        stage('Checkout') {
+            steps {
+                // Clone the repository
+                git branch: 'main', url: 'https://github.com/VrindaKhemka/Predictive-Analysis.git'
+            }
+        }
+        
         stage('Build') {
             steps {
-                echo 'Building the project...'
-            }
+                script {
+                    try {
+                        // Build and run the application using Docker Compose
+                        bat 'docker-compose up --build -d'  // For Linux/MacOS
+                        // For Windows, replace sh with bat
+                    } catch (Exception e) {
+                        // Mark build as failed and re-throw the exception
+                        currentBuild.result = 'FAILURE'
+                        throw e
+                    }
+                }
         }
         stage('Test') {
             steps {
