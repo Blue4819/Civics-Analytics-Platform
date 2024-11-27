@@ -48,6 +48,26 @@ def sentiment_data(card_id):
             print(f"Error: {e}")  # Print error for debugging
             return jsonify({"error": str(e)}), 500  # Handle file read errors
 
+@app.route('/fetch-news', methods=['GET'])
+def fetch_news():
+    try:
+        # Replace this with your actual news extraction logic
+        news_data = extract_top_five_news()  # Implement this function to fetch news
+        return jsonify(news_data)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+def extract_top_five_news():
+    # Example logic to fetch news
+    # This should be replaced with your actual news extraction logic
+    news = [
+        {"title": "News Article 1"},
+        {"title": "News Article 2"},
+        {"title": "News Article 3"},
+        {"title": "News Article 4"},
+        {"title": "News Article 5"},
+    ]
+    return news
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8000)

@@ -15,6 +15,15 @@
         <h3>Fiscal Deficits by State</h3>
         <canvas id="miniFiscalDeficitChart"></canvas>
     </div>
+    <div class="card">
+        <h3>National Sentiments</h3>
+        <canvas id="miniNationalSentimentsChart"></canvas>
+    </div>
+    <div id="card2">
+        <h3>  Top 5 News</h3>
+        <ul id="newsList"></ul>
+        <button id="refreshNewsButton">Refresh News</button>
+    </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
@@ -47,6 +56,12 @@
             const fiscalData = await fiscalResponse.text();
             const fiscalChartData = extractFiscalData(fiscalData);
             renderMiniChart('miniFiscalDeficitChart', fiscalChartData.labels, fiscalChartData.values);
+
+            //Fetch Sentiment Data
+            const sentResponse = await fetch('/nationalsentiments');
+            const sentData = await sentResponse.text();
+            const sentimentChartData = extractSentimentData(sentData);
+            renderMiniChart('miniNationalSentimentsChart', sentimentChartData.labels, sentimentChartData.values);
         };
 
         const extractDisasterData = (html) => {
@@ -82,6 +97,14 @@
             };
         };
 
+        const extractSentimentData = (html) => {
+        const sentimentData = JSON.parse(html.match(/const redditData = (.*?);/)[1]);
+            return {
+                labels: sentimentData.map((_, index) => `Row ${index}`),
+                values: sentimentData.map(data => data.Compound) // Adjust as needed
+            };
+        };
+
         const renderMiniChart = (canvasId, labels, data) => {
             const ctx = document.getElementById(canvasId).getContext('2d');
             new Chart(ctx, {
@@ -107,6 +130,24 @@
             });
         };
 
+        const fetchAndDisplayNews = async () => {
+            const response = await fetch('/fetch-news'); // Fetch news from the backend
+            if (response.ok) {
+                const newsData = await response.json();
+                const newsList = document.getElementById('newsList');
+                newsList.innerHTML = ''; // Clear existing news
+                newsData.forEach(newsItem => {
+                    const listItem = document.createElement('li');
+                    listItem.textContent = newsItem.title; // Assuming newsItem has a 'title' property
+                    newsList.appendChild(listItem);
+                });
+            } else {
+                console.error('Failed to fetch news');
+            }
+        };
+
+        document.getElementById('refreshNewsButton').addEventListener('click', fetchAndDisplayNews);
+
         fetchDataAndRenderCharts();
     });
 </script>
@@ -126,6 +167,16 @@
         width: 400px;
         padding: 5px;
         text-align: center;
+    }
+
+    #card2 {
+        background-color: #f8f9fa;
+        border: 1px solid #c0bebe;
+        height: 300px;
+        width: 200px;
+        position: fixed;
+        top: 20px;
+        right:20px;
     }
 </style>
 {% endblock %}
