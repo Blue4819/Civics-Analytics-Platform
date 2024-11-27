@@ -19,7 +19,7 @@ pipeline {
                 script {
                     try {
                         // Build and run the application using Docker Compose
-                        bat 'docker-compose up --build -d' 
+                        sh 'docker-compose up --build -d' 
                         //sshagent(['production']) {
                           //  sh "ssh -o StrictHostKeyChecking=no -l root 127.0.0.1 'docker-compose up --build -d'"
                         //}
