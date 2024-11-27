@@ -7,9 +7,7 @@ app = Flask(__name__)
 def dashboard():
     return render_template('dashboard.html')
 
-@app.route('/nationalsentiments')
-def nationalsentiments():
-    return render_template('nationalsentiments.html')
+
 
 @app.route('/nationaldisasters')
 def nationaldisasters():
@@ -23,7 +21,21 @@ def nationaldisasters():
 
 @app.route('/economicdeficits')
 def economicdeficits():
-    return render_template('economicdeficits.html')
+    response = requests.post('http://backend:8000/eco-data/economic_deficits')
+    if response.status_code == 200:
+        eco_data = response.json()
+    else:
+        eco_data = []
+    return render_template('economicdeficits.html', eco_data=eco_data)
+
+@app.route('/nationalsentiments')
+def nationalsentiments():
+    response = requests.post('http://backend:8000/sentiment-data/national_sentiments')
+    if response.status_code == 200:
+        reddit_data = response.json()
+    else:
+        reddit_data = []
+    return render_template('nationalsentiments.html', reddit_data=reddit_data)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)

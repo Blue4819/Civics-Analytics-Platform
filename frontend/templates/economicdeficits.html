@@ -1,6 +1,13 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Economic Deficits</h1>
-<p>This page will display economic deficits data.</p>
+<h1>Economic Deficits Over the Years</h1>
+
+<script>
+    // Log the data in the browser console
+    const economicData = {{ eco_data | tojson}};
+    console.log(economicData);
+</script>
+
+<p>Check the console for the data.</p>
 {% endblock %}

@@ -5,7 +5,7 @@
         const ctx = document.getElementById('disasterChart').getContext('2d');
 
         // Use the disaster_data passed from Flask
-        const disasterData = {{ disaster_data | tojson }};  // Convert the Python dictionary to JSON
+        const disasterData = {{ disaster_data | tojson | safe }};  // Convert the Python dictionary to JSON
 
         const labels = Object.keys(disasterData); // Years
         const counts = Object.values(disasterData); // Counts of disasters
