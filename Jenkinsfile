@@ -19,7 +19,8 @@ pipeline {
                 script {
                     try {
                         // Build and run the application using Docker Compose
-                        //sh 'docker-compose up --build -d' 
+                        sh '''ssh -o StrictHostKeyChecking=no user@<laptop_ip> -p 2222 'echo "Hello from Jenkins"
+                        '''
                         echo 'Building app'
                     } catch (Exception e) {
                         // Mark build as failed and re-throw the exception
