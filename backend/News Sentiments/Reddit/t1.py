@@ -29,7 +29,7 @@ sia = SentimentIntensityAnalyzer()
 
 # Choose a subreddit and fetch posts
 subreddit = reddit.subreddit("IndiaNews")  # Replace with your desired subreddit
-hot_posts = subreddit.hot(limit=10)  # Fetch top 500 'hot' posts
+hot_posts = subreddit.hot(limit=60)  # Fetch top 500 'hot' posts
 
 # Perform sentiment analysis and store results
 post_sentiments = []
