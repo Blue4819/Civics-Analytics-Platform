@@ -1,5 +1,5 @@
 pipeline {
-    agent { label 'windows'}
+    agent any
 
     stages {
 
@@ -15,7 +15,7 @@ pipeline {
                 script {
                     try {
                         // Build and run the application using Docker Compose
-                        bat 'docker-compose up --build -d' 
+                        sh 'docker-compose up --build -d' 
                     } catch (Exception e) {
                         // Mark build as failed and re-throw the exception
                         currentBuild.result = 'FAILURE'
