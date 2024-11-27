@@ -24,7 +24,7 @@ pipeline {
                 script {
                     try {
                         // SSH into Windows machine to run remote commands
-                        sh '''sshpass -p $SSH_PASSWORD
+                        sh '''sshpass -p "$SSH_PASSWORD"
                             ssh -o StrictHostKeyChecking=no -i ${SSH_KEY_PATH} ${WIN_USER}@${WIN_HOST} -p ${WIN_PORT} 'echo "Connected to Windows from Docker"'
                             echo 'Running build on Windows from Docker'
                         '''
