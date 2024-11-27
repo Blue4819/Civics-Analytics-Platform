@@ -5,7 +5,53 @@
 <div class="card-container">
     <div class="card">
         <h3>Disaster Statistics</h3>
-        <pre>{{ disaster_data | tojson(indent=2) }}</pre>  <!-- Print the dictionary in JSON format -->
+        <canvas id="disasterChart" width="400" height="200"></canvas>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('disasterChart').getContext('2d');
+
+        // Use the disaster_data passed from Flask
+        const disasterData = {{ disaster_data | tojson }};  // Convert the Python dictionary to JSON
+
+        const labels = Object.keys(disasterData); // Years
+        const counts = Object.values(disasterData); // Counts of disasters
+
+        // Create the chart
+        const myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Number of Disasters',
+                    data: counts,
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Disasters'
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Years'
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 {% endblock %}
