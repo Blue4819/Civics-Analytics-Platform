@@ -27,9 +27,9 @@ def economics_data(card_id):
     if card_id == 'economic_deficits':
         try:
             eco_data = pd.read_csv('./Economic Deficits/india_data.csv')
-            # Convert the DataFrame to a JSON format
             return jsonify(eco_data.to_dict(orient='records'))  # Convert DataFrame to JSON
         except Exception as e:
+            print(f"Error: {e}")  # Print the error to the console
             return jsonify({"error": str(e)}), 500  # Handle file read errors
     return jsonify({"error": "Invalid card_id"}), 400
 

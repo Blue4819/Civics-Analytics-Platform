@@ -28,11 +28,19 @@ def nationaldisasters():
 
 @app.route('/economicdeficits')
 def economicdeficits():
-    response = requests.post('http://backend:8000/eco-data/economic_deficits')
-    if response.status_code == 200:
-        eco_data = response.json()
-    else:
+    try:
+        # Request data from the backend
+        response = requests.post('http://backend:8000/eco-data/economic_deficits')
+        if response.status_code == 200:
+            eco_data = response.json()  # Parse JSON response into Python data structure
+        else:
+            eco_data = []
+            print(f"Backend returned an error: {response.status_code}")
+    except Exception as e:
         eco_data = []
+        print(f"Error connecting to backend: {e}")
+
+    # Pass the data to the template
     return render_template('economicdeficits.html', eco_data=eco_data)
 
 @app.route('/nationalsentiments')

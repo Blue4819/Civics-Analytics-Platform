@@ -1,13 +1,115 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Economic Deficits Over the Years</h1>
+<h1>Economic Deficits</h1>
+<div class="graph-container">
+    <div class="graph">
+        <h3>Economic Deficits Over the Years</h3>
+        <canvas id="economicDeficitsChart" width="400" height="200"></canvas>
+    </div>
+</div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-    // Log the data in the browser console
-    const economicData = {{ eco_data | tojson}};
-    console.log(economicData);
+    document.addEventListener('DOMContentLoaded', function() {
+        // Access the data passed from Flask
+        const ecoData = {{ eco_data | tojson | safe }};
+        
+        // Extract column names (years) and dataset (assuming format is consistent)
+        const years = Object.keys(ecoData[0]).filter(key => !isNaN(key)); // Columns that are years
+        
+        const datasets = ecoData.map(entry => ({
+            label: entry['Series Name'], // Replace with the appropriate column key
+            data: years.map(year => parseFloat(entry[year]) || 0), // Map year to values
+            fill: false,
+            borderColor: getRandomColor(),
+            borderWidth: 2, // Thicker lines for better visibility
+            tension: 0.2, // Slight curve for smoother visualization
+            pointRadius: 4, // Highlight data points for clarity
+            pointBackgroundColor: getRandomColor(0.5), // Transparent point colors
+            pointBorderColor: getRandomColor(1) // Distinct border for points
+        }));
+
+        // Get canvas context and render the chart
+        const ctx = document.getElementById('economicDeficitsChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: years, // X-axis labels
+                datasets: datasets
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: true, // Show legend to identify each line
+                        position: 'top'
+                    },
+                    tooltip: {
+                        enabled: true, // Enable tooltips for data inspection
+                        callbacks: {
+                            label: function(context) {
+                                const value = context.raw || 0;
+                                return `${context.dataset.label}: ${value.toFixed(2)}`; // Show 2 decimal places
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        min: Math.min(...ecoData.flatMap(entry => years.map(year => parseFloat(entry[year])))), // Dynamic min value
+                        max: Math.max(...ecoData.flatMap(entry => years.map(year => parseFloat(entry[year])))), // Dynamic max value
+                        title: {
+                            display: true,
+                            text: 'Value'
+                        },
+                        ticks: {
+                            callback: function(value) {
+                                return value.toFixed(2); // Display ticks with 2 decimals
+                            }
+                        }
+                    },
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Years'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Function to generate random colors with optional transparency
+        function getRandomColor(alpha = 1) {
+            const r = Math.floor(Math.random() * 255);
+            const g = Math.floor(Math.random() * 255);
+            const b = Math.floor(Math.random() * 255);
+            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+        }
+    });
 </script>
 
-<p>Check the console for the data.</p>
+<style>
+    .graph-container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        margin: 20px;
+    }
+
+    .graph {
+        flex: 1;
+        margin: 0 10px;
+        padding: 20px;
+        width: 80%;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+
+    canvas {
+        max-width: 100%;
+        height: auto;
+    }
+</style>
 {% endblock %}
