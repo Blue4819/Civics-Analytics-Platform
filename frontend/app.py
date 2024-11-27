@@ -31,7 +31,16 @@ def nationaldisasters():
 
 @app.route('/economicdeficits')
 def economicdeficits():
-    return render_template('economicdeficits.html')
+    response = requests.post('http://backend:8000/get-economicdata/economic_deficits')
+    fiscal_data = {}
+    if response.status_code == 200:
+        economic_deficit = response.json()
+        for index, row in economic_deficit.iterrows():
+            state = row['State']
+            fiscal_data[state] = row.drop('State').to_dict()  # Drop the 'State' column and convert to dict
+    else:
+        economic_deficit = []
+    return render_template('economicdeficits.html', fiscal_data=fiscal_data)
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
