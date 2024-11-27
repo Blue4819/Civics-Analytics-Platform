@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment{
+        DOCKER_HOST = 'tcp://192.168.56.1:2375'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -15,7 +19,7 @@ pipeline {
                 script {
                     try {
                         // Build and run the application using Docker Compose
-                        sh 'docker-compose up --build -d' 
+                        bat 'docker-compose up --build -d' 
                         //sshagent(['production']) {
                           //  sh "ssh -o StrictHostKeyChecking=no -l root 127.0.0.1 'docker-compose up --build -d'"
                         //}
