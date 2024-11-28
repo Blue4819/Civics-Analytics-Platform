@@ -15,9 +15,12 @@
         <h3>Fiscal Deficits by State</h3>
         <canvas id="miniFiscalDeficitChart"></canvas>
     </div>
-    <div class="card">
+    <div class="card sentiment-card">
         <h3>National Sentiments</h3>
-        <canvas id="miniNationalSentimentsChart"></canvas>
+        <div class="sentiment-charts">
+            <canvas id="miniSentimentBarChart"></canvas>
+            <canvas id="miniSentimentPieChart"></canvas>
+        </div>
     </div>
     <div id="card2">
         <h3>Top 5 News</h3>
@@ -37,45 +40,144 @@
     document.addEventListener('DOMContentLoaded', function() {
         const dashboard = document.getElementById('dashboard');
         Sortable.create(dashboard, {
-            animation: 150, // Animation speed in milliseconds
-            ghostClass: 'sortable-ghost', // Class name for the ghost element
-            chosenClass: 'sortable-chosen', // Class name for the chosen item
-            dragClass: 'sortable-drag' // Class name for the dragging item
+            animation: 150,
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            dragClass: 'sortable-drag'
         });
 
         const newsData = {{ news | tojson }};
         const headlines = Object.keys(newsData);
         const news = Object.values(newsData);
-        console.log(newsData)
 
         const fetchDataAndRenderCharts = async () => {
             // Fetch disaster data
-            const disasterResponse = await fetch('/nationaldisasters'); // Fetch the page to get the data
+            const disasterResponse = await fetch('/nationaldisasters');
             const disasterData = await disasterResponse.text();
             const disasterChartData = extractDisasterData(disasterData);
             renderMiniChart('miniDisasterChart', disasterChartData.labels, disasterChartData.counts);
 
             // Fetch COVID data
-            const covidResponse = await fetch('/nationaldisasters'); // Fetch the same page to get the data
+            const covidResponse = await fetch('/nationaldisasters');
             const covidData = await covidResponse.text();
             const covidChartData = extractCovidData(covidData);
             renderMiniChart('miniCovidChart', covidChartData.labels, covidChartData.counts);
 
             // Fetch fiscal deficit data
-            const fiscalResponse = await fetch('/economicdeficits'); // Fetch the page to get the data
+            const fiscalResponse = await fetch('/economicdeficits');
             const fiscalData = await fiscalResponse.text();
             const fiscalChartData = extractFiscalData(fiscalData);
             renderMiniChart('miniFiscalDeficitChart', fiscalChartData.labels, fiscalChartData.values);
 
-            //Fetch Sentiment Data
+            // Fetch Sentiment Data
             const sentResponse = await fetch('/nationalsentiments');
             const sentData = await sentResponse.text();
-            const sentimentChartData = extractSentimentData(sentData);
-            renderMiniChart('miniNationalSentimentsChart', sentimentChartData.labels, sentimentChartData.values);
+            const sentimentData = extractSentimentData(sentData);
+            renderSentimentCharts('miniSentimentBarChart', 'miniSentimentPieChart', sentimentData);
         };
 
+        const extractSentimentData = (html) => {
+    const sentimentData = JSON.parse(html.match(/const redditData = (.*?);/)[1]);
+    return {
+        barData: {
+            labels: sentimentData.map((_, index) => `Post ${index + 1}`),
+            datasets: [
+                {
+                    label: 'Positive',
+                    data: sentimentData.map(data => data.Positive),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Neutral',
+                    data: sentimentData.map(data => data.Neutral),
+                    backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Negative',
+                    data: sentimentData.map(data => data.Negative),
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Compound Score',
+                    data: sentimentData.map(data => data.Compound),
+                    type: 'line',
+                    backgroundColor: 'rgba(0, 0, 139, 0.6)',
+                    borderColor: 'rgba(0, 0, 139, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }
+            ]
+        },
+        pieData: {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            data: [
+                sentimentData.filter(d => d.Compound > 0.05).length,
+                sentimentData.filter(d => d.Compound >= -0.05 && d.Compound <= 0.05).length,
+                sentimentData.filter(d => d.Compound < -0.05).length
+            ]
+        }
+    };
+};
+
+        const renderSentimentCharts = (barChartId, pieChartId, data) => {
+            // Render bar chart
+            const ctxBar = document.getElementById(barChartId).getContext('2d');
+            new Chart(ctxBar, {
+                type: 'bar',
+                data: data.barData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Render pie chart
+            const ctxPie = document.getElementById(pieChartId).getContext('2d');
+            new Chart(ctxPie, {
+                type: 'pie',
+                data: {
+                    labels: data.pieData.labels,
+                    datasets: [{
+                        data: data.pieData.data,
+                        backgroundColor: [
+                            'rgba(75, 192, 192, 0.6)',
+                            'rgba(255, 206, 86, 0.6)',
+                            'rgba(255, 99, 132, 0.6)'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        };
+
+        // Reference existing functions from the original code
         const extractDisasterData = (html) => {
-            // Logic to extract disaster data from the HTML
             const disasterData = JSON.parse(html.match(/const disasterData = (.*?);/)[1]);
             return {
                 labels: Object.keys(disasterData),
@@ -84,7 +186,6 @@
         };
 
         const extractCovidData = (html) => {
-            // Logic to extract COVID data from the HTML
             const covidData = JSON.parse(html.match(/const covidData = (.*?);/)[1]);
             const stateCases = {};
             covidData.forEach(entry => {
@@ -99,19 +200,10 @@
         };
 
         const extractFiscalData = (html) => {
-            // Logic to extract fiscal data from the HTML
             const fiscalData = JSON.parse(html.match(/const fiscalData = (.*?);/)[1]);
             return {
                 labels: Object.keys(fiscalData[0]).filter(key => key !== 'State'),
-                values: fiscalData.map(state => Object.values(state).slice(1)) // Exclude 'State' key
-            };
-        };
-
-        const extractSentimentData = (html) => {
-        const sentimentData = JSON.parse(html.match(/const redditData = (.*?);/)[1]);
-            return {
-                labels: sentimentData.map((_, index) => `Row ${index}`),
-                values: sentimentData.map(data => data.Compound) // Adjust as needed
+                values: fiscalData.map(state => Object.values(state).slice(1))
             };
         };
 
@@ -142,12 +234,12 @@
 
         const fetchAndDisplayNews = async () => {
             const newsList = document.getElementById('newsList');
-            newsList.innerHTML = ''; // Clear existing news
-                newsData.forEach(newsItem => {
-                    const listItem = document.createElement('li');
-                    listItem.textContent = newsItem.title; // Assuming newsItem has a 'title' property
-                    newsList.appendChild(listItem);
-                });
+            newsList.innerHTML = '';
+            newsData.forEach(newsItem => {
+                const listItem = document.createElement('li');
+                listItem.textContent = newsItem.title;
+                newsList.appendChild(listItem);
+            });
         };
 
         document.getElementById('refreshNewsButton').addEventListener('click', fetchAndDisplayNews);
@@ -162,6 +254,7 @@
         flex-wrap: wrap;
         gap: 20px;
     }
+    
     .card {
         background-color: #f8f9fa;
         border: 1px solid #ddd;
@@ -171,6 +264,22 @@
         width: 400px;
         padding: 5px;
         text-align: center;
+    }
+
+    .sentiment-card {
+        height: 400px;
+    }
+
+    .sentiment-charts {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        height: 100%;
+    }
+
+    .sentiment-charts canvas {
+        flex: 1;
+        max-height: 45%;
     }
 
     #card2 {
