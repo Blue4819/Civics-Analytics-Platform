@@ -12,8 +12,8 @@
         <canvas id="miniCovidChart"></canvas>
     </div>
     <div class="card">
-        <h3>Fiscal Deficits by State</h3>
-        <canvas id="miniFiscalDeficitChart"></canvas>
+        <h3>Economic Deficits Over the Years </h3>
+        <canvas id="economicDeficitsChart"></canvas>
     </div>
     <div class="card sentiment-card">
         <h3>National Sentiments</h3>
@@ -63,11 +63,11 @@
             const covidChartData = extractCovidData(covidData);
             renderMiniChart('miniCovidChart', covidChartData.labels, covidChartData.counts);
 
-            // Fetch fiscal deficit data
+            // Fetch economic deficit data
             const fiscalResponse = await fetch('/economicdeficits');
             const fiscalData = await fiscalResponse.text();
             const fiscalChartData = extractFiscalData(fiscalData);
-            renderMiniChart('miniFiscalDeficitChart', fiscalChartData.labels, fiscalChartData.values);
+            renderMiniChart('mineconomicDeficitsChart', fiscalChartData.labels, fiscalChartData.values);
 
             // Fetch Sentiment Data
             const sentResponse = await fetch('/nationalsentiments');

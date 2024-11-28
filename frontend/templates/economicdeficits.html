@@ -2,84 +2,110 @@
 
 {% block content %}
 <h1>Economic Deficits</h1>
+
+<!-- Dropdown for selecting graph -->
+<label for="graphSelector">Select Graph:</label>
+<select id="graphSelector">
+    <option value="">--Select a Graph--</option>
+    {% for series in eco_data %}
+        <option value="{{ loop.index }}">{{ series['Series Name'] }}</option>
+    {% endfor %}
+</select>
+
 <div class="graph-container">
-    <div class="graph">
-        <h3>Economic Deficits Over the Years</h3>
-        <canvas id="economicDeficitsChart" width="400" height="200"></canvas>
-    </div>
+    <canvas id="chart" width="400" height="200"></canvas>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Access the data passed from Flask
         const ecoData = {{ eco_data | tojson | safe }};
-        
-        // Extract column names (years) and dataset (assuming format is consistent)
-        const years = Object.keys(ecoData[0]).filter(key => !isNaN(key)); // Columns that are years
-        
-        const datasets = ecoData.map(entry => ({
-            label: entry['Series Name'], // Replace with the appropriate column key
-            data: years.map(year => parseFloat(entry[year]) || 0), // Map year to values
-            fill: false,
-            borderColor: getRandomColor(),
-            borderWidth: 2, // Thicker lines for better visibility
-            tension: 0.2, // Slight curve for smoother visualization
-            pointRadius: 4, // Highlight data points for clarity
-            pointBackgroundColor: getRandomColor(0.5), // Transparent point colors
-            pointBorderColor: getRandomColor(1) // Distinct border for points
-        }));
+        const ctx = document.getElementById('chart').getContext('2d');
+        let chartInstance;
 
-        // Get canvas context and render the chart
-        const ctx = document.getElementById('economicDeficitsChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: years, // X-axis labels
-                datasets: datasets
-            },
-            options: {
-                responsive: true,
-                plugins: {
-                    legend: {
-                        display: true, // Show legend to identify each line
-                        position: 'top'
-                    },
-                    tooltip: {
-                        enabled: true, // Enable tooltips for data inspection
-                        callbacks: {
-                            label: function(context) {
-                                const value = context.raw || 0;
-                                return `${context.dataset.label}: ${value.toFixed(2)}`; // Show 2 decimal places
-                            }
-                        }
-                    }
-                },
-                scales: {
-                    y: {
-                        min: Math.min(...ecoData.flatMap(entry => years.map(year => parseFloat(entry[year])))), // Dynamic min value
-                        max: Math.max(...ecoData.flatMap(entry => years.map(year => parseFloat(entry[year])))), // Dynamic max value
-                        title: {
-                            display: true,
-                            text: 'Value'
-                        },
-                        ticks: {
-                            callback: function(value) {
-                                return value.toFixed(2); // Display ticks with 2 decimals
-                            }
-                        }
-                    },
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Years'
-                        }
-                    }
+        const graphSelector = document.getElementById('graphSelector');
+
+        // Function to render the chart based on selected index
+        const renderChart = (selectedIndex) => {
+            if (selectedIndex) {
+                const entry = ecoData[selectedIndex - 1]; // Adjust for zero-based index
+                const years = Object.keys(entry).filter(key => !isNaN(key)); // Extract year columns
+                const values = years.map(year => parseFloat(entry[year]) || 0); // Extract values
+
+                // Destroy previous chart instance if it exists
+                if (chartInstance) {
+                    chartInstance.destroy();
                 }
+
+                // Create a new chart
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: years,
+                        datasets: [{
+                            label: entry['Series Name'],
+                            data: values,
+                            fill: false,
+                            borderColor: getRandomColor(),
+                            tension: 0.1,
+                            pointRadius: 4,
+                            pointBackgroundColor: getRandomColor(0.5),
+                            pointBorderColor: getRandomColor(1)
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            },
+                            tooltip: {
+                                enabled: true,
+                                callbacks: {
+                                    label: function(context) {
+                                        const value = context.raw || 0;
+                                        return `${context.dataset.label}: ${value.toFixed(2)}`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Value'
+                                },
+                                ticks: {
+                                    callback: function(value) {
+                                        return value.toFixed(2);
+                                    }
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Years'
+                                }
+                            }
+                        }
+                    }
+                });
             }
+        };
+
+        // Event listener for dropdown change
+        graphSelector.addEventListener('change', function() {
+            const selectedIndex = this.value;
+            renderChart(selectedIndex);
         });
 
-        // Function to generate random colors with optional transparency
+        // Automatically select the first graph (if available) on page load
+        if (ecoData.length > 0) {
+            graphSelector.value = "1"; // Set to the first option
+            renderChart(1); // Render the first graph
+        }
+
         function getRandomColor(alpha = 1) {
             const r = Math.floor(Math.random() * 255);
             const g = Math.floor(Math.random() * 255);
@@ -91,20 +117,7 @@
 
 <style>
     .graph-container {
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        margin: 20px;
-    }
-
-    .graph {
-        flex: 1;
-        margin: 0 10px;
-        padding: 20px;
-        width: 80%;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
     }
 
     canvas {
