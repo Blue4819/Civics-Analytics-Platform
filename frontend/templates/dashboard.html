@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h1>Dashboard</h1>
+<h1>Dashboard 2</h1>
 <div id="dashboard" class="dashboard-container">
     <div class="card">
         <h3>National Disasters</h3>
@@ -12,8 +12,8 @@
         <canvas id="miniCovidChart"></canvas>
     </div>
     <div class="card">
-        <h3>Economic Deficits Over the Years </h3>
-        <canvas id="economicDeficitsChart"></canvas>
+        <h3>Fiscal Deficits by State</h3>
+        <canvas id="miniFiscalDeficitChart"></canvas>
     </div>
     <div class="card sentiment-card">
         <h3>National Sentiments</h3>
@@ -63,11 +63,11 @@
             const covidChartData = extractCovidData(covidData);
             renderMiniChart('miniCovidChart', covidChartData.labels, covidChartData.counts);
 
-            // Fetch economic deficit data
+            // Fetch fiscal deficit data
             const fiscalResponse = await fetch('/economicdeficits');
             const fiscalData = await fiscalResponse.text();
             const fiscalChartData = extractFiscalData(fiscalData);
-            renderMiniChart('mineconomicDeficitsChart', fiscalChartData.labels, fiscalChartData.values);
+            renderMiniChart('miniFiscalDeficitChart', fiscalChartData.labels, fiscalChartData.values);
 
             // Fetch Sentiment Data
             const sentResponse = await fetch('/nationalsentiments');
@@ -77,53 +77,53 @@
         };
 
         const extractSentimentData = (html) => {
-            const sentimentData = JSON.parse(html.match(/const redditData = (.*?);/)[1]);
-            return {
-                barData: {
-                    labels: sentimentData.map((_, index) => `Post ${index + 1}`),
-                    datasets: [
-                        {
-                        label: 'Positive',
-                        data: sentimentData.map(data => data.Positive),
-                        backgroundColor: 'rgba(75, 192, 192, 0.6)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Neutral',
-                        data: sentimentData.map(data => data.Neutral),
-                        backgroundColor: 'rgba(255, 206, 86, 0.6)',
-                        borderColor: 'rgba(255, 206, 86, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Negative',
-                        data: sentimentData.map(data => data.Negative),
-                        backgroundColor: 'rgba(255, 99, 132, 0.6)',
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        borderWidth: 1
-                    },
-                    {
-                        label: 'Compound Score',
-                        data: sentimentData.map(data => data.Compound),
-                        type: 'line',
-                        backgroundColor: 'rgba(0, 0, 139, 0.6)',
-                        borderColor: 'rgba(0, 0, 139, 1)',
-                        borderWidth: 2,
-                        fill: false
-                    }
-                ]
-            },
-            pieData: {
-                labels: ['Positive', 'Neutral', 'Negative'],
-                data: [
-                    sentimentData.filter(d => d.Compound > 0.05).length,
-                    sentimentData.filter(d => d.Compound >= -0.05 && d.Compound <= 0.05).length,
-                    sentimentData.filter(d => d.Compound < -0.05).length
-                ]
-            }
-            };
-        };
+    const sentimentData = JSON.parse(html.match(/const redditData = (.*?);/)[1]);
+    return {
+        barData: {
+            labels: sentimentData.map((_, index) => `Post ${index + 1}`),
+            datasets: [
+                {
+                    label: 'Positive',
+                    data: sentimentData.map(data => data.Positive),
+                    backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Neutral',
+                    data: sentimentData.map(data => data.Neutral),
+                    backgroundColor: 'rgba(255, 206, 86, 0.6)',
+                    borderColor: 'rgba(255, 206, 86, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Negative',
+                    data: sentimentData.map(data => data.Negative),
+                    backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Compound Score',
+                    data: sentimentData.map(data => data.Compound),
+                    type: 'line',
+                    backgroundColor: 'rgba(0, 0, 139, 0.6)',
+                    borderColor: 'rgba(0, 0, 139, 1)',
+                    borderWidth: 2,
+                    fill: false
+                }
+            ]
+        },
+        pieData: {
+            labels: ['Positive', 'Neutral', 'Negative'],
+            data: [
+                sentimentData.filter(d => d.Compound > 0.05).length,
+                sentimentData.filter(d => d.Compound >= -0.05 && d.Compound <= 0.05).length,
+                sentimentData.filter(d => d.Compound < -0.05).length
+            ]
+        }
+    };
+};
 
         const renderSentimentCharts = (barChartId, pieChartId, data) => {
             // Render bar chart
